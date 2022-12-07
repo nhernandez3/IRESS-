@@ -1,0 +1,147 @@
+---
+title: "SICB"
+author: "Nina Hernandez"
+date: "2022-12-06"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(Stat2Data)
+library(glmmADMB)
+library(utils)
+library(ggplot2)
+library(tidyverse)
+library(dplyr)
+library(pscl)
+library(MASS)
+library(performance)
+library(devtools)
+library(R2admb)
+```
+
+
+```{r}
+# exporting csv experiment 2 data
+exp2 <- read.csv("exp3.csv")
+
+# omitted all N/A values 
+na.omit(exp2)
+```
+
+
+
+# Making a model for the total major movements behavior 
+
+```{r}
+#selected for only treatment and movement columns. short for "movements data set"
+mds <- exp2 %>%
+  select(treatment, total_major_movements, hour, terrarium, video_name)
+```
+
+```{r}
+# made terrarium variable a factor
+mds <- transform(mds,fterrarium=factor(terrarium))
+```
+
+```{r}
+# using the glmmadmb package to create a zero inflation mixed linear binomial plot 
+mds = glmmadmb(formula = total_major_movements ~ treatment * hour + (1 | fterrarium), data = mds, family = "nbinom", zeroInflation = TRUE) 
+summary(mds)
+```
+```{r}
+hist(exp2$total_major_movements)
+```
+```{r}
+poisson.test(sum(exp2$total_major_movements), length(exp2$total_major_movements))
+```
+
+
+
+# Making a model for the touches behavior 
+
+```{r}
+#selected for only the touches behavior. short for "touches data set"
+tds <- exp2 %>%
+  select(treatment, touches, hour, terrarium, video_name)
+```
+
+```{r}
+# made terrarium variable a factor
+tds <- transform(tds,fterrarium=factor(terrarium))
+```
+
+```{r}
+# using the glmmadmb package to create a zero inflation mixed linear poisson plot 
+tds = glmmadmb(formula = touches ~ treatment * hour + (1 | fterrarium), data = tds, family = "poisson", zeroInflation = TRUE) 
+summary(tds)
+```
+
+```{r}
+hist(exp2$touches)
+```
+
+```{r}
+poisson.test(sum(exp2$touches), length(exp2$touches))
+```
+
+
+# Making a model for the foot-flagging behavior 
+
+```{r}
+#selected for only the foot flagging behavior. short for "foot-flags data set"
+footds <- exp2 %>%
+  select(treatment, foot_flags, hour, terrarium, video_name)
+```
+
+```{r}
+# made terrarium variable a factor
+footds <- transform(footds,fterrarium=factor(terrarium))
+```
+
+```{r}
+# using the glmmadmb package to create a zero inflation mixed linear poisson plot 
+footds = glmmadmb(formula = foot_flags ~ treatment * hour + (1 | fterrarium), data = footds, family = "truncnbinom", zeroInflation = TRUE) 
+summary(footds)
+```
+
+```{r}
+hist(exp2$foot_flags)
+```
+
+```{r}
+poisson.test(sum(exp2$foot_flags), length(exp2$foot_flags))
+```
+
+
+# Making a model for the foot flashing behavior 
+
+```{r}
+#selected for only the foot flashing behavior. short for "flashes data set"
+flashds <- exp2 %>%
+  select(treatment, foot_flashes, hour, terrarium, video_name)
+```
+
+```{r}
+# made terrarium variable a factor
+flashds <- transform(flashds,fterrarium=factor(terrarium))
+```
+
+```{r}
+# using the glmmadmb package to create a zero inflation mixed linear poisson plot 
+flashds = glmmadmb(formula = foot_flashes ~ treatment * hour + (1 | fterrarium), data = flashds, family = "truncnbinom", zeroInflation = TRUE) 
+summary(flashds)
+```
+
+```{r}
+hist(exp2$foot_flashes)
+```
+
+```{r}
+poisson.test(sum(exp2$foot_flashes), length(exp2$flashes))
+```
