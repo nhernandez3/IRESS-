@@ -28,12 +28,15 @@ library(R2admb)
 
 ```{r}
 # exporting csv experiment 2 data
-exp2 <- read.csv("exp3.csv")
+exp2 <- read.csv("exp2.csv")
 
 # omitted all N/A values 
 na.omit(exp2)
 ```
 
+```{r}
+#View(exp2)
+```
 
 
 # Making a model for the total major movements behavior 
@@ -55,6 +58,7 @@ mds = glmmadmb(formula = total_major_movements ~ treatment * hour + (1 | fterrar
 summary(mds)
 ```
 ```{r}
+# verifying model
 hist(exp2$total_major_movements)
 ```
 ```{r}
@@ -83,6 +87,7 @@ summary(tds)
 ```
 
 ```{r}
+# verifying model
 hist(exp2$touches)
 ```
 
@@ -104,13 +109,16 @@ footds <- exp2 %>%
 footds <- transform(footds,fterrarium=factor(terrarium))
 ```
 
+
 ```{r}
 # using the glmmadmb package to create a zero inflation mixed linear poisson plot 
+
 footds = glmmadmb(formula = foot_flags ~ treatment * hour + (1 | fterrarium), data = footds, family = "truncnbinom", zeroInflation = TRUE) 
 summary(footds)
 ```
 
 ```{r}
+# verifying model
 hist(exp2$foot_flags)
 ```
 
@@ -134,14 +142,285 @@ flashds <- transform(flashds,fterrarium=factor(terrarium))
 
 ```{r}
 # using the glmmadmb package to create a zero inflation mixed linear poisson plot 
-flashds = glmmadmb(formula = foot_flashes ~ treatment * hour + (1 | fterrarium), data = flashds, family = "truncnbinom", zeroInflation = TRUE) 
-summary(flashds)
+# flashds = glmmadmb(formula = foot_flashes ~ treatment * hour + (1 | fterrarium), data = flashds, family = "truncnbinom", zeroInflation = TRUE) 
+# summary(flashds)
 ```
 
 ```{r}
+# verifying model
 hist(exp2$foot_flashes)
 ```
 
 ```{r}
 poisson.test(sum(exp2$foot_flashes), length(exp2$flashes))
+```
+
+
+# Filtering Hours for Experiment 1
+```{r}
+filterhour1 <-subset(exp2, hour == 1)
+summary(filterhour1)
+
+# made terrarium variable a factor
+filterhour1 <- transform(filterhour1,fterrarium =factor(terrarium))
+```
+```{r}
+# Code for hour 2:
+filterhour2 <-subset(exp2, hour == 2)
+#summary(filterhour2)
+
+# made terrarium variable a factor
+filterhour2 <- transform(filterhour2,fterrarium =factor(terrarium))
+
+#Code for hour 3: 
+
+filterhour3 <-subset(exp2, hour == 3)
+#summary(filterhour3)
+
+# made terrarium variable a factor
+filterhour3 <- transform(filterhour3,fterrarium =factor(terrarium))
+```
+
+# Run T test for each hour with random variable for experiment 2
+
+## Hour 1
+```{r}
+# for movements
+hour1_movements = glmmadmb(formula = total_major_movements ~ treatment + (1 | fterrarium),data = filterhour1, family ="truncnbinom" , zeroInflation = TRUE)
+summary(hour1)
+```
+
+```{r}
+# for touches
+hour1_touches = glmmadmb(formula = touches ~ treatment + (1 | fterrarium),data = filterhour1, family ="poisson" , zeroInflation = TRUE)
+summary(hour1_touches)
+```
+
+```{r}
+# for foot_flags
+hour1_foot_flags = glmmadmb(formula = foot_flags~ treatment + (1 | fterrarium),data = filterhour1, family ="truncnbinom" , zeroInflation = TRUE)
+summary(hour1_foot_flags)
+```
+
+```{r}
+# for foot flashes
+hour1_flash = glmmadmb(formula = foot_flashes ~ treatment + (1 | fterrarium),data = filterhour1, family ="truncnbinom" , zeroInflation = TRUE)
+summary(hour1_flash)
+```
+
+## Hour 2
+```{r}
+# for movements
+# hour2_movements = glmmadmb(formula = total_major_movements ~ treatment + (1 | fterrarium),data = filterhour2, family ="truncnbinom" , zeroInflation = TRUE)
+# summary(hour2_movements)
+```
+
+
+```{r}
+# for touches
+hour2_touches = glmmadmb(formula = touches ~ treatment + (1 | fterrarium),data = filterhour2, family ="poisson" , zeroInflation = TRUE)
+summary(hour2_touches)
+```
+
+```{r}
+# for foot_flags
+hour2_foot_flags = glmmadmb(formula = foot_flags~ treatment + (1 | fterrarium),data = filterhour2, family ="truncnbinom" , zeroInflation = TRUE)
+summary(hour2_foot_flags)
+```
+
+```{r}
+# for foot flashes
+hour2_flash = glmmadmb(formula = foot_flashes ~ treatment + (1 | fterrarium),data = filterhour1, family ="truncnbinom" , zeroInflation = TRUE)
+summary(hour2_flash)
+```
+
+## Hour 3
+
+```{r}
+# for movements
+hour3_movements = glmmadmb(formula = total_major_movements ~ treatment + (1 | fterrarium),data = filterhour3, family ="truncnbinom" , zeroInflation = TRUE)
+summary(hour3_movements)
+```
+
+```{r}
+# for touches
+hour3_touches = glmmadmb(formula = touches ~ treatment + (1 | fterrarium),data = filterhour3, family ="poisson" , zeroInflation = TRUE)
+summary(hour3_touches)
+```
+
+```{r}
+# for foot_flags
+hour3_foot_flags = glmmadmb(formula = foot_flags~ treatment + (1 | fterrarium),data = filterhour3, family ="truncnbinom" , zeroInflation = TRUE)
+summary(hour3_foot_flags)
+```
+
+```{r}
+# for foot flashes
+hour3_flash = glmmadmb(formula = foot_flashes ~ treatment + (1 | fterrarium),data = filterhour3, family ="truncnbinom" , zeroInflation = TRUE)
+summary(hour3_flash)
+```
+
+# Running Comparison without random variable for experiment 2:
+
+## Hour 1: 
+```{r}
+# for total major movements
+newhour1_movements = glmmadmb(formula = total_major_movements ~ treatment,data = filterhour1, family = "poisson", zeroInflation = TRUE)
+summary(newhour1_movements)
+```
+
+
+```{r}
+# for touches 
+newhour1_touches= glmmadmb(formula = touches ~ treatment,data = filterhour1, family = "poisson", zeroInflation = TRUE)
+summary(newhour1_touches)
+```
+
+```{r}
+# for foot flags
+newhour1_foot = glmmadmb(formula = foot_flags~ treatment,data = filterhour1, family = "poisson", zeroInflation = TRUE)
+summary(newhour1_foot)
+```
+
+```{r}
+# for foot flashes
+newhour1_flashes = glmmadmb(formula = foot_flashes ~ treatment,data = filterhour1, family = "poisson", zeroInflation = TRUE)
+summary(newhour1_flashes)
+```
+
+
+
+## Hour 2: 
+```{r}
+# for total major movements
+newhour2_movements = glmmadmb(formula = total_major_movements ~ treatment,data = filterhour2, family = "poisson", zeroInflation = TRUE)
+summary(newhour2_movements)
+```
+
+```{r}
+# for touches 
+newhour2_touches= glmmadmb(formula = touches ~ treatment,data = filterhour2, family = "poisson", zeroInflation = TRUE)
+summary(newhour2_touches)
+```
+
+```{r}
+# for foot flags
+newhour2_foot = glmmadmb(formula = foot_flags~ treatment,data = filterhour2, family = "poisson", zeroInflation = TRUE)
+summary(newhour2_foot)
+```
+
+```{r}
+# for foot flashes
+newhour2_flashes = glmmadmb(formula = foot_flashes ~ treatment,data = filterhour2, family = "poisson", zeroInflation = TRUE)
+summary(newhour2_flashes)
+```
+
+## Hour 3: 
+```{r}
+# for total major movements
+newhour3_movements = glmmadmb(formula = total_major_movements ~ treatment,data = filterhour3, family = "poisson", zeroInflation = TRUE)
+summary(newhour3_movements)
+```
+
+
+```{r}
+# for touches 
+newhour3_touches= glmmadmb(formula = touches ~ treatment,data = filterhour3, family = "poisson", zeroInflation = TRUE)
+summary(newhour3_touches)
+```
+
+```{r}
+# for foot flags
+newhour3_foot = glmmadmb(formula = foot_flags~ treatment,data = filterhour3, family = "poisson", zeroInflation = TRUE)
+summary(newhour3_foot)
+```
+
+```{r}
+# for foot flashes
+newhour3_flashes = glmmadmb(formula = foot_flashes ~ treatment,data = filterhour3, family = "poisson", zeroInflation = TRUE)
+summary(newhour3_flashes)
+```
+
+# With the pscl package
+
+```{r}
+# What % of the data is zeroes? Grouped by hour, then by treatment
+##tally(~foot_flags==0 | treatment, groups=hour, format="percent", data=exp2)
+```
+
+```{r}
+# Create a model called “zero1” which uses the zero-inflated regression model
+# Dependent variable is count data = Behavior
+# Predictor variable is “Treatment” coded as “AVT" or “Saline”
+
+zero1_m <- zeroinfl(total_major_movements ~ treatment, data = exp2)
+summary(zero1)
+```
+```{r}
+# zero-inflated model with no interaction for behavior = touches
+zero1_t <- zeroinfl(touches ~ treatment, data = exp2)
+summary(zero1_t)
+```
+
+```{r}
+# zero-inflated model with no interaction for behavior = foot flags
+zero1_foot <- zeroinfl(foot_flags ~ treatment, data = exp2)
+summary(zero1_foot)
+```
+
+```{r}
+# zero-inflated model with no interaction for behavior = foot flashes
+zero1_flash <- zeroinfl(foot_flashes ~ treatment, data = exp2)
+summary(zero1_flash)
+```
+
+```{r}
+# Full model with interaction term, behavior = movements
+m2 <- zeroinfl(total_major_movements ~ treatment + treatment*hour, data = exp2)
+summary(m2)
+```
+
+```{r}
+# Full model with interaction term, behavior = touches 
+t2 <- zeroinfl(touches~ treatment + treatment*hour, data = exp2)
+summary(t2)
+```
+
+```{r}
+# Full model with interaction term, behavior = movements
+foot2 <- zeroinfl(foot_flags ~ treatment + treatment*hour, data = exp2)
+summary(foot2)
+```
+
+```{r}
+# Full model with interaction term, behavior = movements
+flash2 <- zeroinfl(foot_flashes ~ treatment + treatment*hour, data = exp2)
+summary(flash2)
+```
+
+
+# Focusing on Hour 2, using the pscl model 
+
+```{r}
+#for movements: get an hour, says "invalid dependent variable, minimum count is not zero"
+# zeroinflhour2m <- zeroinfl(total_major_movements ~ treatment, data = filterhour2)
+# summary(zeroinflhour2)
+```
+```{r}
+# for touches behavior 
+zeroinflhour2t <- zeroinfl(touches~ treatment, data = filterhour2)
+summary(zeroinflhour2t)
+```
+
+```{r}
+# for foot flags
+# zeroinflhour2foot <- zeroinfl(foot_flags ~ treatment, data = filterhour2)
+# summary(zeroinflhour2foot)
+```
+
+
+```{r}
+# for foot flashes
+# zeroinflhour2flash <- zeroinfl(foot_flashes ~ treatment, data = filterhour2)
+# summary(zeroinflhour2flash)
 ```
